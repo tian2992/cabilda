@@ -2,8 +2,8 @@ from flask import Flask, _app_ctx_stack, jsonify, url_for, request
 from sqlalchemy.orm import scoped_session
 from twilio.twiml.messaging_response import MessagingResponse
 
-from . import models
-from .database import SessionLocal, engine
+import models
+from database import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine)
 
