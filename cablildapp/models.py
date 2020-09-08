@@ -2,7 +2,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, func
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Date, Text, JSON
-from .database import Base
+from database import Base
 import datetime
 
 # https://github.com/edkrueger/sars-flask/blob/master/app/models.py
@@ -19,31 +19,34 @@ class DictMixIn:
         }
 
 
-class Questions(Base, DictMixIn):
-    __tablename__ = "Questions"
+class Question(Base, DictMixIn):
+    __tablename__ = "Question"
 
     block_id = Column(String(8), primary_key=True, index=True)
     cat = Column(String(4))
     desc = Column(Text, index=True)
-    answers = relationship("Answers", backref="question")
+    answers = relationship("Answer", backref="question")
 
 
 class User(Base, DictMixIn):
+    __tablename__ = "User"
     # a phonenumber
     user_id = Column(String(64), primary_key=True, index=True)
     country = Column(String(2))
-    answers = relationship("Answers", backref="user")
+    answers = relationship("Answer", backref="user")
 
     
-class Answers(Base, DictMixIn):
+class Answer(Base, DictMixIn):
+    __tablename__ = "Answer"
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(String, ForeignKey('Questions.block_id'))
-    question_block_id = Column(String, ForeignKey('Questions.block_id'))
+    user_id = Column(String, ForeignKey('Question.block_id'))
+    question_block_id = Column(String, ForeignKey('Question.block_id'))
     answer_data = Column(JSON)
     media_url = Column(String(250))
 
 
 class Message(Base, DictMixIn):
+    __tablename__ = "Message"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(String, ForeignKey('User.user_id'))
     time_created = Column(DateTime(timezone=True), server_default=func.now())
