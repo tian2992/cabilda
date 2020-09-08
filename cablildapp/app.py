@@ -24,7 +24,7 @@ def get_all_messages():
 
 def create_user(user_id, country = None):
     u = models.User(user_id = user_id, country = country)
-    app.session.add(u)
+    app.session.merge(u)
     return u
 
 
