@@ -60,7 +60,8 @@ def sms_reply():
     app.session.commit()
     # Create reply
     resp = MessagingResponse()
-    resp.message("You said: {}".format(msg))
+    resp.message("""Hola, bienvenida a Cabildo \u00D7 LatAm. Usaremos lo que nos compartas para contribuir a la discusión. 
+                 Tu participación es anónima. Por favor, si aceptas los términos, déjanos tu comentario o nota de voz.""")
 
     return str(resp)
 
