@@ -19,6 +19,14 @@ class DictMixIn:
         }
 
 
+class User(Base, DictMixIn):
+    __tablename__ = "Userz"
+    # a phonenumber
+    user_id = Column(String(64), primary_key=True, index=True)
+    country = Column(String(2), nullable=True)
+    answers = relationship("Answer", backref="user")
+
+
 class Question(Base, DictMixIn):
     __tablename__ = "Question"
 
@@ -28,18 +36,10 @@ class Question(Base, DictMixIn):
     answers = relationship("Answer", backref="question")
 
 
-class User(Base, DictMixIn):
-    __tablename__ = "User"
-    # a phonenumber
-    user_id = Column(String(64), primary_key=True, index=True)
-    country = Column(String(2))
-    answers = relationship("Answer", backref="user")
-
-    
 class Answer(Base, DictMixIn):
     __tablename__ = "Answer"
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(String, ForeignKey('Question.block_id'))
+    user_id = Column(String, ForeignKey('Userz.user_id'))
     question_block_id = Column(String, ForeignKey('Question.block_id'))
     answer_data = Column(JSON)
     media_url = Column(String(250))
@@ -48,6 +48,6 @@ class Answer(Base, DictMixIn):
 class Message(Base, DictMixIn):
     __tablename__ = "Message"
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(String, ForeignKey('User.user_id'))
+    user_id = Column(String, ForeignKey('Userz.user_id'))
     time_created = Column(DateTime(timezone=True), server_default=func.now())
     all_message = Column(JSON)

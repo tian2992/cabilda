@@ -22,8 +22,16 @@ def get_all_messages():
     return jsonify([mess.to_dict() for mess in messages])
 
 
+def create_user(user_id, country = None):
+    u = models.User(user_id = user_id, country = country)
+    app.session.add(u)
+    return u
+
+
 def log_message(message):
-    m = models.Message(message)
+    m = models.Message()
+    m.user_id = message.get("From")
+    m.all_message = message
     app.session.add(m)
     return
 
@@ -33,11 +41,23 @@ def sms_reply():
     """Respond to incoming calls with a simple text message."""
     # Fetch the message
     msg = request.form.get('Body')
+    full_form = dict(request.form)
+    from_id = request.form.get('From')
 
     try:
-        log_message(request.form)
+        create_user(from_id)
     except:
-        app.logger.error("error logging mess")
+        app.logger.error("fail logging user")
+
+    app.session.commit()
+    try:
+        full_form["user_id"] = from_id
+        log_message(full_form)
+    except Exception as e:
+        app.logger.error(f"error logging mess {e}")
+
+
+    app.session.commit()
     # Create reply
     resp = MessagingResponse()
     resp.message("You said: {}".format(msg))
