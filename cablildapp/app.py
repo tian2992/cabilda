@@ -14,6 +14,13 @@ app.session = scoped_session(SessionLocal, scopefunc=_app_ctx_stack.__ident_func
 def hello():
     return "Hello, World!"
 
+
+@app.route("/messages.json")
+def get_all_messages():
+    messages = app.session.query(models.Message).all()
+    return jsonify([mess.to_dict() for mess in messages])
+
+
 @app.route("/sms", methods=['POST'])
 def sms_reply():
     """Respond to incoming calls with a simple text message."""

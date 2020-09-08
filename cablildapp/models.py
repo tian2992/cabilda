@@ -1,5 +1,6 @@
 #models
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, func
+from sqlalchemy.orm import relationship
 from sqlalchemy.types import Date, Text, JSON
 from .database import Base
 import datetime
@@ -24,16 +25,26 @@ class Questions(Base, DictMixIn):
     block_id = Column(String(8), primary_key=True, index=True)
     cat = Column(String(4))
     desc = Column(Text, index=True)
-    
     answers = relationship("Answers", backref="question")
+
+
+class User(Base, DictMixIn):
+    # a phonenumber
+    user_id = Column(String(64), primary_key=True, index=True)
+    country = Column(String(2))
+    answers = relationship("Answers", backref="user")
 
     
 class Answers(Base, DictMixIn):
     id = Column(Integer, primary_key=True, index=True)
-    
+    user_id = Column(String, ForeignKey('Questions.block_id'))
     question_block_id = Column(String, ForeignKey('Questions.block_id'))
     answer_data = Column(JSON)
-    url_data = Column(String(250))
-    
+    media_url = Column(String(250))
 
-    
+
+class Message(Base, DictMixIn):
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String, ForeignKey('User.user_id'))
+    time_created = Column(DateTime(timezone=True), server_default=func.now())
+    all_message = Column(JSON)
