@@ -2,10 +2,10 @@ from flask import Flask, _app_ctx_stack, jsonify, url_for, request
 from sqlalchemy.orm import scoped_session
 from twilio.twiml.messaging_response import MessagingResponse
 
-from .models import Message, User, Answers, Base
+from . import models
 from .database import SessionLocal, engine
 
-Base.metadata.create_all(bind=engine)
+models.Base.metadata.create_all(bind=engine)
 
 app = Flask(__name__)
 app.session = scoped_session(SessionLocal, scopefunc=_app_ctx_stack.__ident_func__)
@@ -18,12 +18,12 @@ def hello():
 
 @app.route("/messages.json")
 def get_all_messages():
-    messages = app.session.query(Message).all()
+    messages = app.session.query(models.Message).all()
     return jsonify([mess.to_dict() for mess in messages])
 
 
 def log_message(message):
-    m = Message(message)
+    m = models.Message(message)
     app.session.add(m)
     return
 
